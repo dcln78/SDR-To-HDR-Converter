@@ -1,0 +1,8 @@
+# 1. 忽略所有文件
+*
+
+# 2. 【例外】只保留 README.md (exe也不要了，因为太大了)
+!README.md
+
+# 3. 保留 .gitignore 本身
+!.gitignore
