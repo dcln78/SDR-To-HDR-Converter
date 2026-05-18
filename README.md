@@ -1,6 +1,6 @@
 # 🎬 SDR To HDR Converter
 
-![Version](https://img.shields.io/badge/version-1.0-blue.svg) ![Python](https://img.shields.io/badge/Python-3.10+-yellow.svg) ![Platform](https://img.shields.io/badge/Platform-Windows-0078D6.svg) ![License](https://img.shields.io/badge/license-MIT-green.svg)
+![Version](https://img.shields.io/badge/version-1.1-blue.svg) ![Python](https://img.shields.io/badge/Python-3.10+-yellow.svg) ![Platform](https://img.shields.io/badge/Platform-Windows-0078D6.svg) ![License](https://img.shields.io/badge/license-MIT-green.svg)
 
 **SDR To HDR Converter** 是一款专业的视频处理工具，专为将 SDR（标准动态范围）视频转换为 HDR（高动态范围）广播级标准而设计。
 
@@ -15,6 +15,7 @@
 - **双模式运行**：
   - 📄 **单文件转换**：针对单个视频文件进行精细化处理。
   - 📂 **文件夹监控**：自动化监控指定目录，实现批量无人值守处理。
+- **裁剪与切片**：支持按秒跳过片头/片尾，并在裁剪后按用户输入的每段时长自动切片输出。
 
 ### ⚙️ 强大的视频编码控制
 - **硬件加速**：完全利用 NVIDIA GPU (NVEncC) 进行 HEVC/H.265 10bit 编码。
@@ -24,14 +25,33 @@
   - 分辨率、帧率 (FPS)、GOP 长度自定义。
   - **码率控制**：支持 CBR (固定码率) 和 VBR (动态码率)。
   - **编码等级**：开放 Profile (Main10), Level (5.0-6.2), Tier (Main/High) 设置。
+- **GPU 缩放**：缩放由 NVEncC 的 GPU 侧执行，避免 FFmpeg CPU 缩放成为高分辨率处理瓶颈。
+- **HEVC Level 自动匹配**：根据分辨率、帧率和码率自动计算并提升到合适的 HEVC Level，避免编码器报错。
+
+### 📊 智能辅助模块 (New)
+- **媒体分析**：基于 `ffprobe` 的轻量元数据分析，自动识别分辨率、帧率、色彩空间。
+- **硬件检测**：自动探测 GPU 能力与 NVEncC 支持情况，并提供推荐编码参数。
+- **智能诊断**：结构化错误分类系统，针对配置、硬件、媒体、进程等错误提供恢复建议。
+- **预设管理**：支持预设的导入导出，具备完善的配置版本迁移机制（v1 -> v3）。
+- **任务队列**：内置状态机驱动的任务管理，严格校验状态流转。
 
 ### 🎵 多音轨处理
 - **多格式支持**：支持 AC3, AAC (libfdk_aac), MP2 等音频编码。
 - **双音轨封装**：支持同时封装主音轨（如 5.1 声道）和副音轨（如立体声）。
+- **真实立体声上混**：2 声道到 5.1 声道不再只是复制声道，而是使用 FFmpeg `surround` 滤镜进行空间分析上混。
 
 ### 📦 输出格式
 - **广播级 TS**：符合电视台播出标准的 MPEG-TS 封装。
 - **网络级 MP4**：适合网络分发的高兼容性 MP4 封装。
+
+### 🆕 最近更新
+- 将大分辨率缩放从 FFmpeg CPU 侧迁移到 NVEncC GPU 侧，显著降低 8K 等素材的处理瓶颈。
+- 增加 HEVC Level 自动计算，避免高分辨率/高码率下触发 Level 限制报错。
+- 增加真实的 2ch → 5.1 上混能力，提升音频输出质量。
+- 增加按秒裁剪片头/片尾能力。
+- 增加按用户输入的每段时长切片能力，且切片发生在裁剪之后。
+- 切片输出自动追加 `_001`、`_002`、`_003` 后缀，便于批量管理。
+- 支持一键打包为单个 `.exe`。
 
 ---
 
@@ -41,6 +61,16 @@
 
 1.  **操作系统**: Windows 10/11 (64位)
 2.  **硬件**: NVIDIA 显卡 (支持 HEVC 10bit 编码)
+3.  **外部工具**: 需要系统中安装有 `ffmpeg`, `ffprobe` 和 `NVEncC64.exe` 并配置在 PATH 中。
+
+## ⚠️ 已知限制 (Known Limitations)
+
+- **系统平台**: 仅支持 Windows 系统。
+- **硬件依赖**: 核心编码功能依赖 NVIDIA GPU (NVEnc)。若无显卡，系统将根据硬件探测结果建议切换至 FFmpeg 软件编码（速度较慢）。
+- **配置同步**: 目前 GUI 内部字段命名与后端参数构造器存在部分映射差异（已在 `backend_args_builder.py` 处理）。
+- **预设字段**: `preset` 键在 GUI 配置中暂无直接来源，目前由后端根据硬件探测结果推荐。
+- **预览功能**: 暂不支持转换过程中的实时画面预览。
+- **持久化**: 任务队列状态仅在内存中维护，暂不支持断点续传。
 
 ---
 
