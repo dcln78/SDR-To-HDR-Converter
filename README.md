@@ -4,7 +4,7 @@
 
 **SDR To HDR Converter Pro** 是一款专业的视频处理工具，专为将 SDR（标准动态范围）视频转换为 HDR（高动态范围）广播级标准而设计。
 
-它基于 **FFmpeg** 和 **NVIDIA NVEnc** 硬件加速技术，通过加载高精度的 3D LUT，实现色彩空间的精确映射（Rec.709 -> Rec.2020/P3），并支持 **PQ** 和 **HLG** 两种主流 HDR 标准。
+它基于 **FFmpeg** 和 **NVIDIA NVEnc** 硬件加速技术，实现色彩空间的精确映射（Rec.709 -> Rec.2020/P3），并支持 **PQ** 和 **HLG** 两种主流 HDR 标准。
 
 ---
 
